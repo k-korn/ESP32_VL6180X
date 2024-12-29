@@ -48,9 +48,11 @@ public:
     }
     return true;
   }
-  bool read(uint16_t *pRangeMilliMeter) {
+  bool read(uint16_t *pRangeMilliMeter, uint32_t *pAmbRate) {
     VL6180x_RangeData_t Range;
     int status = VL6180x_RangePollMeasurement(dev, &Range);
+    //ESP_LOGI(TAG,"Signal Rate: %d, AmbRate: %d, RetRate: %d, ConvTime: %d", Range.signalRate_mcps, Range.rtnAmbRate, Range.rtnRate, Range.rtnConvTime);
+    *pAmbRate = Range.rtnAmbRate;
     if (status != 0 || Range.errorStatus != 0) {
       ESP_LOGW(TAG, "i2c status: %d, range status: %s", status,
                VL6180x_RangeGetStatusErrString(Range.errorStatus));
