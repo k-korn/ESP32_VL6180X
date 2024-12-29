@@ -59,6 +59,20 @@ public:
     *pRangeMilliMeter = Range.range_mm;
     return true;
   }
+
+  bool als_read(uint32_t *pAlsLx) {
+    VL6180x_AlsData_t AlsData;
+    VL6180x_AlsSetIntegrationPeriod(dev,200);
+    VL6180x_AlsSetAnalogueGain(dev,32);
+    int status = VL6180x_AlsPollMeasurement(dev, &AlsData);
+    if (status != 0 || AlsData.errorStatus != 0) {
+      ESP_LOGW(TAG, "i2c status: %d, als status: %d", status,AlsData.errorStatus);
+      return false;
+    }
+    *pAlsLx = AlsData.lux;
+    return true;
+  }
+
   void i2cMasterInit(gpio_num_t pin_sda = GPIO_NUM_21,
                      gpio_num_t pin_scl = GPIO_NUM_22, uint32_t freq = 400000) {
     static i2c_config_t conf;
